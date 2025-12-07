@@ -1,26 +1,44 @@
-import { useState } from "react";
+import React, { useState } from 'react'
 
-export default function SearchBar({ onSearch }) {
-  const [input, setInput] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!input) return;
-    onSearch(input);
-    setInput("");
-  };
+export default function SearchBar({ onSearch, recent = [], onSelectRecent }) {
+const [q, setQ] = useState('')
 
-  return (
-    <form onSubmit={handleSubmit} className="flex gap-2 mb-6 justify-center">
+
+function submit(e) {
+  e.preventDefault()
+    if (!q.trim()) return
+      onSearch(q.trim())
+        setQ('')
+}
+
+
+return (
+  <div className="w-full max-w-2xl mx-auto p-4">
+    <form onSubmit={submit} className="flex gap-2">
       <input
-        className="px-4 py-2 rounded-lg text-black w-60"
-        placeholder="Search city..."
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-      />
-      <button className="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium">
-        Search
-      </button>
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        placeholder="Search city (e.g. Nairobi)"
+        className="flex-1 rounded-md p-2 border shadow-sm"
+        />
+      <button className="px-4 py-2 rounded-md bg-blue-600 text-white">Search</button>
     </form>
-  );
+
+
+{recent?.length > 0 && (
+  <div className="mt-3 flex flex-wrap gap-2">
+    {recent.map((r) => (
+    <button
+      key={r}
+      onClick={() => onSelectRecent(r)}
+      className="text-sm px-3 py-1 rounded bg-gray-100"
+      >
+      {r}
+    </button>
+  ))}
+  </div>
+)}
+  </div>
+)
 }
