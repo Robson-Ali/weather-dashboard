@@ -1,53 +1,65 @@
-import { useEffect, useState } from "react";
-import SearchBar from "./components/SearchBar";
-import WeatherCard from "./components/WeatherCard";
-import ErrorMessage from "./components/ErrorMessage";
+import React, { useEffect, useState, useRef } from 'react'
+const [city, setCity] = useState('')
+const [units, setUnits] = useState('metric')
+const [current, setCurrent] = useState(null)
+const [daily, setDaily] = useState(null)
+const [error, setError] = useState('')
+const [recent, setRecent] = useState(() => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
+const timerRef = useRef(null)
 
-const API_KEY = "YOUR_API_KEY_HERE";
 
-function App() {
-  const [city, setCity] = useState("London");
-  const [weather, setWeather] = useState(null);
-  const [error, setError] = useState("");
+useEffect(() => {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(recent.slice(0, 6)))
+}, [recent])
 
-  const fetchWeather = async (cityName = city) => {
-    try {
-      setError("");
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=${API_KEY}`
-      );
 
-      if (!res.ok) throw new Error("City not found");
+useEffect(() => {
+// cleanup on unmount
+return () => clearInterval(timerRef.current)
+}, [])
 
-      const data = await res.json();
-      setWeather(data);
-      setCity(cityName);
-    } catch (err) {
-      setError(err.message);
-      setWeather(null);
-    }
-  };
 
-  useEffect(() => {
-    fetchWeather(city);
+async function load(cityName) {
+setError('')
+try {
+const data = await fetchWeatherByCity(cityName, units)
+const { coord, name } = data
+const one = await fetchOneCall(coord.lat, coord.lon, units)
 
-    // Auto-refresh every 5 minutes
-    const interval = setInterval(() => fetchWeather(city), 300000);
-    return () => clearInterval(interval);
-  }, []);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 to-indigo-600 text-white p-6">
-      <div className="max-w-lg mx-auto text-center">
-        <h1 className="text-4xl font-bold mb-6">Weather Dashboard</h1>
+setCity(name)
+setCurrent(one.current)
+setDaily(one.daily)
 
-        <SearchBar onSearch={fetchWeather} />
 
-        {error && <ErrorMessage message={error} />}
-        {weather && <WeatherCard data={weather} />}
-      </div>
-    </div>
-  );
+// update recent
+setRecent((r) => [name, ...r.filter(x => x.toLowerCase() !== name.toLowerCase())].slice(0, 6))
+
+
+// reset auto-refresh
+clearInterval(timerRef.current)
+timerRef.current = setInterval(() => load(name), REFRESH_INTERVAL)
+} catch (err) {
+setError(err.message || 'Something went wrong')
+}
 }
 
-export default App;
+
+function handleSearch(q) {
+load(q)
+}
+
+
+function handleSelectRecent(r) {
+load(r)
+}
+
+
+function handleRefresh() {
+if (!city) return
+load(city)
+}
+
+
+return (
+<div className="min-h-screen bg-gradient-to-b from-sk
