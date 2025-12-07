@@ -3,7 +3,7 @@ import SearchBar from './components/SearchBar'
 import WeatherCard from './components/WeatherCard'
 import ForecastCard from './components/ForecastCard'
 import ErrorMessage from './components/ErrorMessage'
-import { fetchWeatherByCity, fetchOneCall } from './api/weather'
+import { fetchWeatherByCity, fetchForecast } from './api/weather'   // ✅ FIXED
 
 const REFRESH_INTERVAL = 1000 * 60 * 5 // 5 minutes
 const STORAGE_KEY = 'wd:recent'
@@ -31,13 +31,16 @@ export default function App() {
   async function load(cityName) {
     setError('')
     try {
+      // 1. Get city + coords
       const data = await fetchWeatherByCity(cityName, units)
       const { coord, name } = data
-      const one = await fetchOneCall(coord.lat, coord.lon, units)
+
+      // 2. Get free 5-day forecast
+      const forecast = await fetchForecast(coord.lat, coord.lon, units)
 
       setCity(name)
-      setCurrent(one.current)
-      setDaily(one.daily)
+      setCurrent(data)             // use actual current weather
+      setDaily(forecast)           // dailyList array
 
       setRecent((r) =>
         [name, ...r.filter((x) => x.toLowerCase() !== name.toLowerCase())].slice(0, 6)
