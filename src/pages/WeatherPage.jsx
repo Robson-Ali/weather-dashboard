@@ -5,11 +5,15 @@ import ForecastCard from '../components/ForecastCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { fetchWeatherByCity, fetchForecast } from '../api/weather';
 
+import { useTheme } from '../context/ThemeContext'; 
+
 const REFRESH_INTERVAL = 1000 * 60 * 5; // 5 minutes
 const STORAGE_KEY = 'wd:recent';
+const DEFAULT_CITY_KEY = 'wd:defaultCity'; // 🛑 NEW: Key for default city storage
 
-// This is the main Weather functionality page.
 export default function WeatherPage() {
+  const { theme } = useTheme();
+
   const [city, setCity] = useState('');
   const [units, setUnits] = useState('metric');
   const [current, setCurrent] = useState(null);
@@ -57,12 +61,20 @@ export default function WeatherPage() {
     }
   }, [units]); 
 
-  // Effect 1: Auto-refresh data when units change (Uses load, city, units dependencies)
+  
+  // Effect 1: INITIAL LOAD LOGIC (Checks for Default City or reloads on unit change)
   useEffect(() => {
+    // 🛑 If a city is already loaded, reload it when units change.
     if (city) {
       load(city);
+    } else {
+      // 🛑 If no city is loaded, check for a default city on initial mount.
+      const defaultCityName = localStorage.getItem(DEFAULT_CITY_KEY);
+      if (defaultCityName) {
+        load(defaultCityName);
+      }
     }
-  }, [units, load, city]);
+  }, [units, load]); // Only include units and load, excluding 'city' to avoid infinite loops when city is set by load()
 
   // Effect 2: Save recent searches to Local Storage
   useEffect(() => {
@@ -74,7 +86,7 @@ export default function WeatherPage() {
     return () => clearInterval(timerRef.current);
   }, []); 
 
-  // Event Handlers
+  // Event Handlers (Unchanged)
   function handleSearch(q) {
     load(q);
   }
@@ -88,14 +100,24 @@ export default function WeatherPage() {
     load(city);
   }
 
+  // Theming Logic for local component elements (Unchanged from previous step)
+  const headerClasses = theme === 'dark' 
+    ? 'bg-gray-800 text-gray-200 border-gray-700' 
+    : 'bg-white text-gray-700 border-gray-100';
+
+  const titleClasses = theme === 'dark' ? 'text-gray-100' : 'text-gray-700';
+
+  const refreshButtonClasses = theme === 'dark' 
+    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+    : 'bg-gray-200 text-gray-800 hover:bg-gray-300';
+
+
   return (
-    // We are removing the 'min-h-screen' and 'max-w-4xl' classes 
-    // and letting the Layout component manage the overall page structure.
     <div className="flex flex-col gap-6"> 
       
-      {/* Page Title & Controls (Local to this page) */}
-      <header className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white rounded-lg shadow-sm border border-gray-100">
-        <h2 className="text-2xl font-bold text-gray-700">Live Weather Search</h2>
+      {/* Page Title & Controls */}
+      <header className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-lg shadow-sm border ${headerClasses}`}>
+        <h2 className={`text-2xl font-bold ${titleClasses}`}>Live Weather Search</h2>
         <div className="flex items-center gap-2">
             
           {/* Unit Toggle */}
@@ -109,13 +131,14 @@ export default function WeatherPage() {
           {/* Refresh Button */}
           <button 
             onClick={handleRefresh} 
-            className="px-3 py-1 rounded-full bg-gray-200 text-gray-800 font-semibold text-sm hover:bg-gray-300 transition"
+            className={`px-3 py-1 rounded-full font-semibold text-sm transition ${refreshButtonClasses}`}
           >
             Refresh
           </button>
         </div>
       </header>
 
+      {/* Search Bar & Error Message */}
       <SearchBar
         onSearch={handleSearch}
         recent={recent}
@@ -128,7 +151,6 @@ export default function WeatherPage() {
       {current && <WeatherCard city={city} weather={current} units={units} />}
       {daily && <ForecastCard daily={daily} units={units} />}
       
-      {/* Removed the footer to prevent duplication if the Layout has one */}
     </div>
   );
 }
