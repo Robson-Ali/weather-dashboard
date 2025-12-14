@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Layout from './components/Layout'; // Import the new Layout
+import Layout from './pages/Layout'; // Import the new Layout
 import DashboardPage from './pages/DashboardPage';
 import WeatherPage from './pages/WeatherPage';
 import SettingsPage from './pages/SettingsPage'; // Import the new Settings page
