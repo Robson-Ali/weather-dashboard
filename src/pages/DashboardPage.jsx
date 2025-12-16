@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white p-12 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 p-12 flex flex-col items-center justify-center">
       <div className="text-center max-w-lg p-8 bg-white/90 backdrop-blur rounded-2xl shadow-xl">
         <h1 className="text-5xl font-extrabold text-blue-700 mb-4">
           Welcome to the Weather Dashboard
