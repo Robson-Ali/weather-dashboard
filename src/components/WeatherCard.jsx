@@ -24,6 +24,10 @@ function getUvColor(uvi) {
 export default function WeatherCard({ city, weather, units }) {
   if (!weather) return null;
 
+  const mainTemp = weather.main?.temp ?? weather.temp;
+  const feelsLike = weather.main?.feels_like ?? weather.feels_like;
+  const humidity = weather.main?.humidity ?? weather.humidity;
+
   const tempUnit = units === 'metric' ? '°C' : '°F';
   const speedUnit = units === 'metric' ? 'km/h' : 'mph';
 
