@@ -8,19 +8,13 @@ export default function Layout({ children }) {
   // Use 'dark' class for Tailwind CSS dark mode utilities
   const themeClass = theme === 'dark' ? 'dark' : ''; 
 
-  // Determine if the background should be the gradient or plain color
-  const isDashboard = window.location.pathname === '/';
-  
-  // Base classes for the main div
-  const baseClasses = `min-h-screen ${themeClass}`;
+  // Base classes for the main div (make it a column flex so footer can sit at bottom)
+  const baseClasses = `min-h-screen flex flex-col ${themeClass}`;
 
-  // Conditional background based on page and theme
-  const backgroundClasses = 
-    isDashboard && theme === 'light'
-      ? 'bg-gradient-to-b from-blue-100 to-white'
-      : theme === 'dark'
-      ? 'bg-gray-900 text-gray-100' // Dark mode background
-      : 'bg-gray-50'; // Light mode background for sub-pages
+  // For light mode use a lighter blue gradient across all pages; dark mode keeps the gray background
+  const backgroundClasses = theme === 'dark'
+    ? 'bg-gray-900 text-gray-100'
+    : 'bg-gradient-to-b from-blue-100 to-blue-50';
 
   const linkClasses = ({ isActive }) => 
     `py-2 px-4 rounded-full transition duration-150 ease-in-out ${
@@ -28,8 +22,8 @@ export default function Layout({ children }) {
         ? 'bg-blue-600 text-white font-bold shadow-md' 
         : theme === 'dark' 
         ? 'text-gray-300 hover:bg-gray-700' // Dark mode nav text
-        : 'text-gray-700 hover:bg-gray-200' // Light mode nav text
-    }`;
+        : 'text-blue-700 hover:bg-blue-200' // Light mode nav text
+    }`; 
 
   return (
     // 🛑 Apply classes to the outermost div
@@ -65,9 +59,14 @@ export default function Layout({ children }) {
       </nav>
 
       {/* Page Content Area */}
-      <main className="max-w-6xl mx-auto p-4 sm:p-6">
+      <main className="flex-1 max-w-6xl mx-auto p-4 sm:p-6">
         {children}
       </main>
+
+      {/* Footer (stick to bottom when content is short) */}
+      <footer className={`w-full mt-auto py-4 text-center text-sm border-t ${theme === 'dark' ? 'border-gray-700 text-gray-300' : 'border-blue-100 text-blue-700'}`} aria-label="Site footer">
+        WeatherApp © 2026
+      </footer>
     </div>
   );
 }

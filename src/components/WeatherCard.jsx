@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 function WeatherIcon({ icon, desc }) {
   const src = `https://openweathermap.org/img/wn/${icon}@2x.png`;
@@ -13,13 +14,6 @@ function WeatherIcon({ icon, desc }) {
   );
 }
 
-function getUvColor(uvi) {
-  if (uvi <= 2) return 'text-green-600';
-  if (uvi <= 5) return 'text-yellow-600';
-  if (uvi <= 7) return 'text-orange-600';
-  if (uvi <= 10) return 'text-red-600';
-  return 'text-purple-600';
-}
 
 export default function WeatherCard({ city, weather, units }) {
   if (!weather) return null;
@@ -38,16 +32,24 @@ export default function WeatherCard({ city, weather, units }) {
       : Math.round(windSpeedMps * 2.237)
     : null;
 
-  const uvColor = getUvColor(weather.uvi);
+  const sunrise = weather.sys?.sunrise ?? weather.sunrise;
+  const sunset = weather.sys?.sunset ?? weather.sunset;
+  const dt = weather.dt ?? null;
+
+  const { theme } = useTheme();
+  const containerClasses = `max-w-3xl mx-auto p-6 rounded-lg shadow mt-6 backdrop-blur ${theme === 'dark' ? 'bg-gray-800/60 text-gray-100' : 'bg-blue-50/70 text-blue-900'}`;
+  const mutedClass = theme === 'dark' ? 'text-gray-300' : 'text-blue-700';
+  const labelClass = theme === 'dark' ? 'text-xs text-gray-400' : 'text-xs text-blue-600';
+  const statCardClasses = `p-3 rounded text-center ${theme === 'dark' ? 'bg-gray-700/50' : 'bg-blue-50'}`;
 
   return (
-    <div className="max-w-3xl mx-auto bg-white/70 backdrop-blur p-6 rounded-lg shadow mt-6">
+    <div className={containerClasses}>
       {/* City and time */}
       <div className="flex items-center gap-6">
         <div>
           <h2 className="text-2xl font-semibold">{city}</h2>
-          <p className="text-sm text-gray-600">
-            {new Date(weather.dt * 1000).toLocaleString()}
+          <p className={`text-sm ${mutedClass}`}>
+            {dt ? new Date(dt * 1000).toLocaleString() : '—'}
           </p>
         </div>
 
@@ -55,10 +57,9 @@ export default function WeatherCard({ city, weather, units }) {
         <div className="flex-1 flex items-center justify-end gap-6">
           <div className="text-center">
             <div className="text-4xl font-bold">
-              {Math.round(weather.temp)}
-              {tempUnit}
+              {mainTemp != null ? `${Math.round(mainTemp)}${tempUnit}` : '—'}
             </div>
-            <div className="text-sm text-gray-600">
+            <div className={`text-sm ${mutedClass}`}>
               {weather.weather?.[0]?.description}
             </div>
           </div>
@@ -71,48 +72,41 @@ export default function WeatherCard({ city, weather, units }) {
       </div>
 
       {/* Main stats */}
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">Humidity</div>
-          <div className="font-medium">{weather.humidity}%</div>
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+        <div className={statCardClasses}>
+          <div className={labelClass}>Humidity</div>
+          <div className="font-medium">{humidity != null ? `${humidity}%` : '—'}</div>
         </div>
 
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">Wind</div>
+        <div className={statCardClasses}>
+          <div className={labelClass}>Wind</div>
           <div className="font-medium">
             {windSpeed !== null ? `${windSpeed} ${speedUnit}` : '—'}
           </div>
         </div>
 
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">Feels like</div>
+        <div className={statCardClasses}>
+          <div className={labelClass}>Feels like</div>
           <div className="font-medium">
-            {Math.round(weather.feels_like)}
-            {tempUnit}
+            {feelsLike != null ? `${Math.round(feelsLike)}${tempUnit}` : '—'}
           </div>
         </div>
 
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">UV Index</div>
-          <div className={`font-medium ${uvColor}`}>
-            {weather.uvi ?? '—'}
-          </div>
-        </div>
       </div>
 
       {/* Sunrise / sunset */}
       <div className="mt-4 grid grid-cols-2 gap-4 text-sm">
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">Sunrise</div>
+        <div className={statCardClasses}>
+          <div className={labelClass}>Sunrise</div>
           <div className="font-medium">
-            {new Date(weather.sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {sunrise ? new Date(sunrise * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
           </div>
         </div>
 
-        <div className="p-3 bg-gray-50 rounded text-center">
-          <div className="text-xs text-gray-500">Sunset</div>
+        <div className={statCardClasses}>
+          <div className={labelClass}>Sunset</div>
           <div className="font-medium">
-            {new Date(weather.sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {sunset ? new Date(sunset * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—'}
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ import ForecastCard from '../components/ForecastCard';
 import ErrorMessage from '../components/ErrorMessage';
 import { fetchWeatherByCity, fetchForecast } from '../api/weather';
 import { useTheme } from '../context/ThemeContext';
+import { useUnits } from '../context/UnitsContext.jsx';
 
 const REFRESH_INTERVAL = 1000 * 60 * 5; // 5 minutes
 const STORAGE_KEY = 'wd:recent';
@@ -14,7 +15,7 @@ export default function WeatherPage() {
   const { theme } = useTheme();
 
   const [city, setCity] = useState('');
-  const [units, setUnits] = useState('metric');
+  const { units } = useUnits();
   const [current, setCurrent] = useState(null);
   const [daily, setDaily] = useState(null);
   const [error, setError] = useState('');
@@ -84,25 +85,22 @@ export default function WeatherPage() {
 
   const headerClasses = theme === 'dark'
     ? 'bg-gray-800 text-gray-200 border-gray-700'
-    : 'bg-white text-gray-700 border-gray-100';
+    : 'bg-blue-50 text-blue-700 border-blue-100';
 
-  const titleClasses = theme === 'dark' ? 'text-gray-100' : 'text-gray-700';
+  const titleClasses = theme === 'dark' ? 'text-gray-100' : 'text-blue-700';
 
   const refreshButtonClasses = theme === 'dark'
     ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-    : 'bg-gray-200 text-gray-800 hover:bg-gray-300';
+    : 'bg-blue-100 text-blue-800 hover:bg-blue-200';
 
   return (
     <div className="flex flex-col gap-6">
       <header className={`flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-lg shadow-sm border ${headerClasses}`}>
         <h2 className={`text-2xl font-bold ${titleClasses}`}>Live Weather Search</h2>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setUnits((u) => (u === 'metric' ? 'imperial' : 'metric'))}
-            className="px-3 py-1 rounded-full bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition"
-          >
+          <div className="px-3 py-1 rounded-full font-semibold text-sm">
             Units: {units === 'metric' ? '°C / km/h' : '°F / mph'}
-          </button>
+          </div>
 
           <button
             onClick={handleRefresh}

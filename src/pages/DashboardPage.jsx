@@ -1,14 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 
 export default function DashboardPage() {
+  const { theme } = useTheme();
+
+  const outerClass = "min-h-screen p-12 flex flex-col items-center justify-center";
+  const cardClass = theme === 'dark'
+    ? 'text-center max-w-lg p-8 bg-gray-800/90 backdrop-blur rounded-2xl shadow-xl text-gray-100'
+    : 'text-center max-w-lg p-8 bg-blue-50/90 backdrop-blur rounded-2xl shadow-xl text-blue-900';
+  const titleClass = `text-5xl font-extrabold mb-4 ${theme === 'dark' ? 'text-blue-200' : 'text-blue-900'}`;
+  const paragraphClass = theme === 'dark' ? 'text-gray-300 mb-8' : 'text-blue-800 mb-8';
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 p-12 flex flex-col items-center justify-center">
-      <div className="text-center max-w-lg p-8 bg-white/90 backdrop-blur rounded-2xl shadow-xl">
-        <h1 className="text-5xl font-extrabold text-blue-700 mb-4">
+    <div className={outerClass}>
+      <div className={cardClass}>
+        <h1 className={titleClass}>
           Welcome to the Weather Dashboard
         </h1>
-        <p className="text-lg text-gray-600 mb-8">
+        <p className={paragraphClass}>
           Your portal for real-time weather, forecasts, and recent city searches.
         </p>
         <Link 

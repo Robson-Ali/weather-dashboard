@@ -1,14 +1,18 @@
 import React from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 export default function ForecastCard({ daily, units }) {
   if (!daily || !Array.isArray(daily)) return null;
 
+  const { theme } = useTheme();
   const tempUnit = units === 'metric' ? '°C' : '°F';
   const speedUnit = units === 'metric' ? 'km/h' : 'mph';
+  const containerClasses = `max-w-3xl mx-auto mt-4 ${theme === 'dark' ? 'bg-gray-800/60 divide-y divide-white/10' : 'bg-blue-50/60 divide-y divide-white/40'}`;
+  const mutedClass = theme === 'dark' ? 'text-gray-300' : 'text-blue-700';
 
   return (
-    <div className="max-w-3xl mx-auto mt-4">
-      <ul className="divide-y divide-white/40 bg-white/60 rounded">
+    <div>
+      <ul className={containerClasses + " rounded"}>
         {daily.slice(0, 7).map((d) => (
           <li
             key={d.date}
@@ -34,21 +38,19 @@ export default function ForecastCard({ daily, units }) {
             {/* Middle: temps */}
             <div className="text-sm text-right">
               <div>
-                {Math.round(d.temp_max)}
-                {tempUnit} / {Math.round(d.temp_min)}
-                {tempUnit}
+                {Number.isFinite(d.temp_max) ? `${Math.round(d.temp_max)}${tempUnit}` : '—'} / {Number.isFinite(d.temp_min) ? `${Math.round(d.temp_min)}${tempUnit}` : '—'}
               </div>
               {typeof d.pop !== 'undefined' && (
-                <div className="text-xs text-gray-600">
+                <div className={`text-xs ${mutedClass}`}>
                   {Math.round(d.pop * 100)}% rain
                 </div>
               )}
             </div>
 
             {/* Right: wind + humidity */}
-            <div className="text-xs text-gray-600 text-right">
-              <div>Wind: {Math.round(d.wind_speed * (units === 'metric' ? 3.6 : 2.237))} {speedUnit}</div>
-              <div>Humidity: {d.humidity}%</div>
+            <div className={`text-xs ${mutedClass} text-right`}>
+              <div>Wind: {typeof d.wind_speed === 'number' ? Math.round(d.wind_speed * (units === 'metric' ? 3.6 : 2.237)) + ` ${speedUnit}` : '—'}</div>
+              <div>Humidity: {typeof d.humidity === 'number' ? `${d.humidity}%` : '—'}</div>
             </div>
           </li>
         ))}

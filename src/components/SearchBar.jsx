@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
+import { useTheme } from '../context/ThemeContext';
 
 export default function SearchBar({ onSearch, recent = [], onSelectRecent }) {
+  const { theme } = useTheme();
   const [q, setQ] = useState('');
+
+  const inputClasses = `flex-1 rounded-md p-2 border shadow-sm ${theme === 'dark' ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-blue-50 text-blue-900 border-blue-200'}`;
+  const mutedClass = theme === 'dark' ? 'text-sm text-gray-300' : 'text-sm text-blue-700';
+  const recentButtonClasses = theme === 'dark' ? 'text-sm px-3 py-1 rounded bg-gray-700 text-gray-100 hover:bg-gray-600' : 'text-sm px-3 py-1 rounded bg-blue-100 text-blue-800 hover:bg-blue-200';
+  const locationButtonClasses = theme === 'dark' ? 'text-sm text-blue-400 hover:text-blue-200' : 'text-sm text-blue-600 hover:text-blue-800';
 
   function submit(e) {
     e.preventDefault();
@@ -36,7 +43,7 @@ export default function SearchBar({ onSearch, recent = [], onSelectRecent }) {
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search city (e.g. Nairobi)"
-          className="flex-1 rounded-md p-2 border shadow-sm"
+          className={inputClasses}
         />
         <button className="px-4 py-2 rounded-md bg-blue-600 text-white">
           Search
@@ -47,12 +54,12 @@ export default function SearchBar({ onSearch, recent = [], onSelectRecent }) {
         <div className="flex flex-wrap gap-2">
           {recent?.length > 0 && (
             <>
-              <span className="text-sm text-gray-500">Recent:</span>
+              <span className={mutedClass}>Recent:</span>
               {recent.map((r) => (
                 <button
                   key={r}
                   onClick={() => onSelectRecent(r)}
-                  className="text-sm px-3 py-1 rounded bg-gray-100 hover:bg-gray-200"
+                  className={recentButtonClasses}
                 >
                   {r}
                 </button>
@@ -63,7 +70,7 @@ export default function SearchBar({ onSearch, recent = [], onSelectRecent }) {
 
         <button
           onClick={handleUseLocation}
-          className="text-sm text-blue-600 hover:text-blue-800"
+          className={locationButtonClasses}
         >
           Use my location
         </button>
