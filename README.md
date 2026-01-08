@@ -114,7 +114,7 @@ The app uses `import.meta.env.VITE_OPENWEATHER_API_KEY` to access the key.
 
 ## Development notes
 
-- Default boilerplate has been removed and project-specific README and structure added.
+- Default boilerplate has been removed and rewrite the README according to the project-specific.
 - Theme: `ThemeContext` provides `theme` and `toggleTheme`.
 - Units: `UnitsContext` provides `units` and `setUnits` (persisted to `localStorage`).
 - The WeatherPage fetch flow uses `fetchWeatherByCity` and `fetchForecast` in `src/api/weather.js`.
