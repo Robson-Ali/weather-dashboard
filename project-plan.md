@@ -9,7 +9,6 @@ This development plan outlines all phases required to build a fully functional *
 - JavaScript
 - CSS or TailwindCSS
 - React Router
-- Zustand
 - OpenWeatherMap API
 
 The application will allow users to search for city weather, view live conditions, handle errors gracefully, and use a clean, responsive interface.
@@ -32,7 +31,7 @@ The application will allow users to search for city weather, view live condition
 
 - [ ] Initialize project using Vite
 - [ ] Create folder structure (`components/`, `pages/`, )
-- [ ] Install dependencies (React Router, Zustand, TailwindCSS if chosen)
+- [ ] Install dependencies (React Router, TailwindCSS)
 - [ ] Configure Tailwind CSS (optional)
 - [x] Remove default boilerplate code
 - [ ] Implement base routing (`/` for Dashboard, optional `/weather` or `/settings`)
@@ -64,7 +63,7 @@ The application will allow users to search for city weather, view live condition
 
 ### **Steps**
 
-- [ ] Create Zustand store (`store/weatherStore.js`)
+- [ ] Create store (`api/weatherStore.js`)
 - [ ] Add global states:
   - [ ] `city`
   - [ ] `weatherData`
@@ -175,7 +174,6 @@ The application will allow users to search for city weather, view live condition
 - [ ] Test invalid city searches
 - [ ] Simulate network/API errors
 - [ ] Test responsiveness
-- [ ] Verify Zustand state updates
 - [ ] Fix UI and UX issues
 
 ---
