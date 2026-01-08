@@ -49,7 +49,6 @@ Run locally (instructions below) or see the deployed site (if available).
 - Vite (dev server & build)
 - Tailwind CSS for styling
 - React Router for navigation
-- Zustand (optional — initial plan) / Context for simple shared state
 - OpenWeatherMap API for weather data
 
 ---
