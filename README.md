@@ -1,16 +1,134 @@
-# React + Vite
+# Weather Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A small, responsive weather dashboard built with React and Vite that lets users search for a city and view current weather and short-term forecasts using the OpenWeatherMap API.
 
-Currently, two official plugins are available:
+- Live search and results
+- Recent searches list
+- Configurable default city and unit settings
+- Responsive UI with light/dark themes (TailwindCSS)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## Table of contents
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- [Demo](#demo)
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Install & run](#install--run)
+  - [Environment variables](#environment-variables)
+- [Project structure](#project-structure)
+- [Development notes](#development-notes)
+- [Contributing](#contributing)
+- [License](#license)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Demo
+
+Run locally (instructions below) or see the deployed site (if available).
+
+---
+
+## Features
+
+- Search weather by city name
+- Current conditions and daily forecast summary
+- Recent searches (persisted to localStorage)
+- Set a default city to auto-load on startup
+- Unit selection (Metric / Imperial) configurable in Settings
+- Light and Dark themes with accessible contrast
+- Graceful handling of API/network errors
+
+---
+
+## Tech stack
+
+- React (v18+)
+- Vite (dev server & build)
+- Tailwind CSS for styling
+- React Router for navigation
+- Zustand (optional — initial plan) / Context for simple shared state
+- OpenWeatherMap API for weather data
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- Node.js 16+ (recommended 18+)
+- npm or yarn
+
+### Install & run
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Set environment variables (see below)
+
+3. Run dev server
+
+```bash
+npm run dev
+```
+
+4. Build for production
+
+```bash
+npm run build
+```
+
+5. Preview build
+
+```bash
+npm run preview
+```
+
+### Environment variables
+
+Create a `.env` file in the project root with your OpenWeatherMap API key:
+
+```env
+VITE_OPENWEATHER_API_KEY=your_openweathermap_api_key_here
+```
+
+The app uses `import.meta.env.VITE_OPENWEATHER_API_KEY` to access the key.
+
+---
+
+## Project structure (important files)
+
+- `src/`
+  - `api/weather.js` — functions that call OpenWeatherMap endpoints
+  - `components/` — `SearchBar`, `WeatherCard`, `ForecastCard`, `ErrorMessage`
+  - `context/` — theme and units context providers
+  - `pages/` — `DashboardPage`, `WeatherPage`, `SettingsPage`, `Layout`
+  - `main.jsx` — app entry and router
+
+---
+
+## Development notes
+
+- Default boilerplate has been removed and project-specific README and structure added.
+- Theme: `ThemeContext` provides `theme` and `toggleTheme`.
+- Units: `UnitsContext` provides `units` and `setUnits` (persisted to `localStorage`).
+- The WeatherPage fetch flow uses `fetchWeatherByCity` and `fetchForecast` in `src/api/weather.js`.
+- Components guard against missing data and display `—` instead of `NaN`.
+
+---
+
+## Contributing
+
+- Fork the repo, create a branch, add tests and features, and open a pull request.
+- Keep changes focused; update the README and project plan when adding features.
+
+---
+
+## License
+
+MIT — see LICENSE file for details.
